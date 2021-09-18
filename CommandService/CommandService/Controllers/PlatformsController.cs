@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CommandService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/c/[controller]")]
     public class PlatformsController : ControllerBase
     {
         [HttpPost]
