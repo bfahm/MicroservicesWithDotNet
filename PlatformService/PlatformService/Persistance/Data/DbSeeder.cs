@@ -5,7 +5,6 @@ using PlatformService.Persistance.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PlatformService.Persistance.Data
 {
@@ -36,7 +35,7 @@ namespace PlatformService.Persistance.Data
 
         private static IEnumerable<Platform> PreparePlatforms()
         {
-            return new List<Platform> 
+            return new List<Platform>
             {
                 new Platform{Name = "Dot Net", Publisher = "Microsoft", Cost= "Free" },
                 new Platform{Name = "SQL Server Express", Publisher = "Microsoft", Cost= "Free" },
