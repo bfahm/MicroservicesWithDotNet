@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using PlatformService.HttpClients.Interfaces;
+using PlatformService.HttpClients.Services;
 using PlatformService.Persistance.Data;
 using PlatformService.Persistance.Interfaces;
 using PlatformService.Persistance.Services;
@@ -30,6 +32,8 @@ namespace PlatformService
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddHttpClient<ICommandClient, CommandClient>();
 
             services.AddScoped<IPlatformRepository, PlatformRepository>();
             services.AddControllers();

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PlatformService.Dtos;
+using PlatformService.HttpClients.Interfaces;
 using PlatformService.Models;
 using PlatformService.Persistance.Interfaces;
+using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace PlatformService.Controllers
 {
@@ -14,11 +16,13 @@ namespace PlatformService.Controllers
     {
         private readonly IPlatformRepository platformRepository;
         private readonly IMapper mapper;
+        private readonly ICommandClient commandClient;
 
-        public PlatformsController(IPlatformRepository platformRepository, IMapper mapper)
+        public PlatformsController(IPlatformRepository platformRepository, IMapper mapper, ICommandClient commandClient)
         {
             this.platformRepository = platformRepository;
             this.mapper = mapper;
+            this.commandClient = commandClient;
         }
 
         [HttpGet]
@@ -42,7 +46,7 @@ namespace PlatformService.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PlatformReadDto> CreatePlatform(PlatformCreateDto platformCreateDto)
+        public async Task<ActionResult<PlatformReadDto>> CreatePlatform(PlatformCreateDto platformCreateDto)
         {
             var platformModel = mapper.Map<Platform>(platformCreateDto);
             platformRepository.CreatePlatform(platformModel);
@@ -50,7 +54,21 @@ namespace PlatformService.Controllers
 
             var platformReadDto = mapper.Map<PlatformReadDto>(platformModel);
 
+            await TryPostToCommandsService(platformReadDto);
+
             return CreatedAtRoute(nameof(GetById), new { Id = platformReadDto.Id }, platformReadDto);
+        }
+
+        private async Task TryPostToCommandsService(PlatformReadDto platformReadDto)
+        {
+            try
+            {
+                await commandClient.SendPlatformToCommand(platformReadDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
+            }
         }
     }
 }
