@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mssql-platform-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mssql-platform-deployment
+  template:
+    metadata:
+      labels:
+        app: mssql-platform-deployment
+    spec:
+      containers:
+      - name: mssql-platform-deployment
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        ports:
+        - containerPort: 1433
+        env:
+          - name: MSSQL_PID
+            value: "Express"
+          - name: ACCEPT_EULA
+            value: "Y"
+          - name: SA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name:  mssql-secret
+                key: SA_PASSWORD
+        volumeMounts:
+          - mountPath: /var/opt/mssql/data
+            name: mssql-volume-mount
+      volumes:
+        - name: mssql-volume-mount
+          persistentVolumeClaim:
+            claimName: mssql-claim
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-cluserip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: mssql-platform-deployment
+  ports:
+  - name: mssql-platform-deployment
+    port: 1433
+    targetPort: 1433
+    protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-loadbalacer-srv
+spec:
+  type: LoadBalancer
+  selector:
+    app: mssql-platform-deployment
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
