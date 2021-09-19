@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using PlatformService.Models;
 using PlatformService.Persistance.Interfaces;
 using System;
@@ -15,7 +18,28 @@ namespace PlatformService.Persistance.Data
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var platformRepo = scope.ServiceProvider.GetService<IPlatformRepository>();
+                var environment = scope.ServiceProvider.GetService<IWebHostEnvironment>();
+
+                if (environment.IsProduction())
+                {
+                    var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
+                    TryMigrate(dbContext);
+                }
+
                 SeedIfNotSeeded(platformRepo);
+            }
+        }
+
+        private static void TryMigrate(AppDbContext dbContext)
+        {
+            try
+            {
+                Console.WriteLine($"--> Attempting Migrations..");
+                dbContext.Database.Migrate();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"--> Could not run migrations: {ex.Message}");
             }
         }
 

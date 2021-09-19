@@ -5,8 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using PlatformService.Helpers;
 using PlatformService.HttpClients.Interfaces;
 using PlatformService.HttpClients.Services;
+using PlatformService.Models;
 using PlatformService.Persistance.Data;
 using PlatformService.Persistance.Interfaces;
 using PlatformService.Persistance.Services;
@@ -16,20 +18,43 @@ namespace PlatformService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _env;
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(opt =>
+            services.Configure<AppSettings>(Configuration);
+            var appSettings = Configuration.Get<AppSettings>();
+
+            if (_env.IsProduction())
             {
-                opt.UseInMemoryDatabase("InMem");
-            });
+                Console.WriteLine($"--> Using SQL Server Database");
+                var connectionString = ConnectionStringUtils.Prepare(appSettings.DatabaseConnectionString,
+                                                                 appSettings.DatabasePassword);
+
+                Console.WriteLine($"Current connection string: {connectionString}");
+
+                services.AddDbContext<AppDbContext>(opt =>
+                {
+                    opt.UseSqlServer(connectionString);
+                });
+            }
+            else
+            {
+                Console.WriteLine($"--> Using InMem Database");
+                services.AddDbContext<AppDbContext>(opt =>
+                {
+                    opt.UseInMemoryDatabase("InMem");
+                });
+            }
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -42,7 +67,7 @@ namespace PlatformService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlatformService", Version = "v1" });
             });
 
-            Console.WriteLine($"Commands Service API is hosted at: {Configuration["CommandService"]}");
+            Console.WriteLine($"Commands Service API is hosted at: {appSettings.CommandService}");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
