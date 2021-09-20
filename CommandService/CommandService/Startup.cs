@@ -1,3 +1,5 @@
+using CommandService.Helpers;
+using CommandService.Models;
 using CommandService.Persistance.Data;
 using CommandService.Persistance.Interfaces;
 using CommandService.Persistance.Services;
@@ -19,19 +21,42 @@ namespace CommandService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _env;
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(opt =>
+            services.Configure<AppSettings>(Configuration);
+            var appSettings = Configuration.Get<AppSettings>();
+
+            if (_env.IsProduction())
             {
-                opt.UseInMemoryDatabase("InMem");
-            });
+                Console.WriteLine($"--> Using SQL Server Database");
+                var connectionString = ConnectionStringUtils.Prepare(appSettings.DatabaseConnectionString,
+                                                                 appSettings.DatabasePassword);
+
+                Console.WriteLine($"Current connection string: {connectionString}");
+
+                services.AddDbContext<AppDbContext>(opt =>
+                {
+                    opt.UseSqlServer(connectionString);
+                });
+            }
+            else
+            {
+                Console.WriteLine($"--> Using InMem Database");
+                services.AddDbContext<AppDbContext>(opt =>
+                {
+                    opt.UseInMemoryDatabase("InMem");
+                });
+            }
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -63,6 +88,8 @@ namespace CommandService
             {
                 endpoints.MapControllers();
             });
+
+            app.SeedData();
         }
     }
 }
