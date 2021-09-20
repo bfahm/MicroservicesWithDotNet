@@ -3,66 +3,32 @@ using PlatformService.Dtos;
 using PlatformService.Models;
 using RabbitMQ.Client;
 using System;
-using System.Text;
-using System.Text.Json;
 
 namespace PlatformService.MQ
 {
-    public class MessageBusClient : IMessageBusClient
+    public class MessageBusClient : BaseMessageBus, IMessageBusClient
     {
-        private const string EXCHANGE_NAME = "platform-exchange";
-        private IConnection _connection;
+        public const string PLATFORM_EXCHANGE = "platform-exchange";
         private IModel _channel;
 
-        public MessageBusClient(IOptions<AppSettings> options)
+        public MessageBusClient(IOptions<AppSettings> options) : base(options)
         {
-            var appSettings = options.Value;
-
-            var factory = new ConnectionFactory()
-            {
-                HostName = appSettings.RabbitMQConfig.Host,
-                Port = appSettings.RabbitMQConfig.Port
-            };
-
             try
             {
-                _connection = factory.CreateConnection();
-                _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
-
                 _channel = _connection.CreateModel();
-                _channel.ExchangeDeclare(exchange: EXCHANGE_NAME, type: ExchangeType.Fanout);
+                _channel.ExchangeDeclare(exchange: PLATFORM_EXCHANGE, type: ExchangeType.Fanout);
 
-                Console.WriteLine("--> Connected to MessageBus");
-
+                Console.WriteLine($"--> Created a new channel: {_channel}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"--> Could not connect to the Message Bus: {ex.Message}");
+                Console.WriteLine($"--> Could not create a channel in connection: {_connection}, {ex.Message}");
             }
         }
 
         public void PublishNewPlatform(PlatformPublishedDto platformPublishedDto)
         {
-            SendMessage(platformPublishedDto);
-        }
-
-        private void SendMessage<T>(T messageObject)
-        {
-            var message = JsonSerializer.Serialize(messageObject);
-            var body = Encoding.UTF8.GetBytes(message);
-
-            if (!_connection.IsOpen)
-            {
-                Console.WriteLine("--> RabbitMQ connection is closed, msg not sent");
-                return;
-            }
-
-            _channel.BasicPublish(exchange: EXCHANGE_NAME, routingKey: string.Empty, basicProperties: null, body: body);
-            Console.WriteLine($"--> Msg sent: {message}");
-        }
-        private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
-        {
-            Console.WriteLine("--> RabbitMQ Connection Shutdown");
+            SendMessage(platformPublishedDto, _channel, PLATFORM_EXCHANGE);
         }
     }
 }
