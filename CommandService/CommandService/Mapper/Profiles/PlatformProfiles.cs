@@ -8,7 +8,9 @@ namespace CommandService.Mapper.Profiles
     {
         public PlatformProfiles()
         {
-            CreateMap<Platform, PlatformreadDto>();
+            CreateMap<Platform, PlatformReadDto>();
+            CreateMap<PlatformPublishedDto, Platform>()
+                .ForMember(dest => dest.ExternalID, opt => opt.MapFrom(src => src.Id));
         }
     }
 }
