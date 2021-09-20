@@ -15,6 +15,12 @@ spec:
       containers:
       - name: platformservice
         image: bolafahmi/command_service:latest
+        env:
+          - name:  DatabasePassword
+            valueFrom:
+              secretKeyRef:
+                key: SA_PASSWORD
+                name:  mssql-secret
 
 ---
 
