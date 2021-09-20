@@ -20,7 +20,7 @@ namespace CommandService.MQ
                 HostName = appSettings.RabbitMQConfig.Host,
                 Port = appSettings.RabbitMQConfig.Port
             };
-            
+
             TryEstablishConnection();
             TryCreateChannel();
 
@@ -69,7 +69,7 @@ namespace CommandService.MQ
         public abstract void DeclareExchange();
         public abstract void DeclareQueue();
         public abstract void BindExchange();
-        
+
         public abstract void Consume();
     }
 }

@@ -42,7 +42,7 @@ namespace CommandService.MQ.BackgroundServices
             };
 
             _publishedPlatformBusSubscriber.Consume();
-            
+
             return Task.CompletedTask;
         }
     }

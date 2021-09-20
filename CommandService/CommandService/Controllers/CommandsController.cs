@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CommandService.Dtos.Commands;
-using CommandService.Dtos.Platforms;
 using CommandService.Models;
 using CommandService.Persistance.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +34,7 @@ namespace CommandService.Controllers
 
             var commands = _commandsRepository.GetCommandsForPlatform(platformId);
             var response = _mapper.Map<IEnumerable<CommandReadDto>>(commands);
-            
+
             return Ok(response);
         }
 

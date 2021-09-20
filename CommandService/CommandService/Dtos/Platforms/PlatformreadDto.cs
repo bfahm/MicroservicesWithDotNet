@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CommandService.Dtos.Platforms
+﻿namespace CommandService.Dtos.Platforms
 {
     public class PlatformReadDto
     {

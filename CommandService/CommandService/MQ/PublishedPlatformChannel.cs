@@ -10,7 +10,7 @@ namespace CommandService.MQ
     {
         private const string PLATFORM_EXCHANGE = "platform-exchange";
         private const string PLATFORM_PUBLISH_ROUTING_KEY = "platforms-new-publish";
-        
+
         public EventingBasicConsumer Consumer { get; }
 
         private string _queueName;
