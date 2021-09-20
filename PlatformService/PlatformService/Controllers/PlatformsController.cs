@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlatformService.Dtos;
 using PlatformService.HttpClients.Interfaces;
 using PlatformService.Models;
+using PlatformService.MQ;
 using PlatformService.Persistance.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,14 @@ namespace PlatformService.Controllers
         private readonly IPlatformRepository platformRepository;
         private readonly IMapper mapper;
         private readonly ICommandClient commandClient;
+        private readonly IMessageBusClient messageBusClient;
 
-        public PlatformsController(IPlatformRepository platformRepository, IMapper mapper, ICommandClient commandClient)
+        public PlatformsController(IPlatformRepository platformRepository, IMapper mapper, ICommandClient commandClient, IMessageBusClient messageBusClient)
         {
             this.platformRepository = platformRepository;
             this.mapper = mapper;
             this.commandClient = commandClient;
+            this.messageBusClient = messageBusClient;
         }
 
         [HttpGet]
@@ -53,8 +56,11 @@ namespace PlatformService.Controllers
             platformRepository.SaveChanges();
 
             var platformReadDto = mapper.Map<PlatformReadDto>(platformModel);
+            var platformPublishedDto = mapper.Map<PlatformPublishedDto>(platformReadDto);
+            platformPublishedDto.Event = "Platform_Published";
 
             await TryPostToCommandsService(platformReadDto);
+            TryPostToMessageBus(platformPublishedDto);
 
             return CreatedAtRoute(nameof(GetById), new { Id = platformReadDto.Id }, platformReadDto);
         }
@@ -68,6 +74,18 @@ namespace PlatformService.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
+            }
+        }
+
+        private void TryPostToMessageBus(PlatformPublishedDto platformPublishedDto)
+        {
+            try
+            {
+                messageBusClient.PublishNewPlatform(platformPublishedDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send asynchronously: {ex.Message}");
             }
         }
     }

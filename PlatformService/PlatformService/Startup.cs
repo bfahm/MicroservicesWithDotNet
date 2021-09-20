@@ -9,6 +9,7 @@ using PlatformService.Helpers;
 using PlatformService.HttpClients.Interfaces;
 using PlatformService.HttpClients.Services;
 using PlatformService.Models;
+using PlatformService.MQ;
 using PlatformService.Persistance.Data;
 using PlatformService.Persistance.Interfaces;
 using PlatformService.Persistance.Services;
@@ -59,6 +60,8 @@ namespace PlatformService
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddHttpClient<ICommandClient, CommandClient>();
+            
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
             services.AddScoped<IPlatformRepository, PlatformRepository>();
             services.AddControllers();
