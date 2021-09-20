@@ -29,7 +29,7 @@ namespace PlatformService.HttpClients.Services
             var uri = configuration["CommandService"];
             var response = await httpClient.PostAsync(uri, requestPayload);
 
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
                 Console.WriteLine("--> Sync POST to CommandService was OK!");
             else
                 Console.WriteLine("--> Sync POST to CommandService was NOT OK!");

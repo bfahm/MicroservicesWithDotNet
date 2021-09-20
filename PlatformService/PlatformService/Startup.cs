@@ -60,7 +60,7 @@ namespace PlatformService
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddHttpClient<ICommandClient, CommandClient>();
-            
+
             services.AddSingleton<IPlatformPublishBusClient, PlatformPublishBusClient>();
 
             services.AddScoped<IPlatformRepository, PlatformRepository>();

@@ -37,7 +37,7 @@ namespace PlatformService.Persistance.Data
                 Console.WriteLine($"--> Attempting Migrations..");
                 dbContext.Database.Migrate();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"--> Could not run migrations: {ex.Message}");
             }

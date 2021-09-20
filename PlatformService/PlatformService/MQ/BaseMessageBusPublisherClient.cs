@@ -10,7 +10,7 @@ namespace PlatformService.MQ
     public class BaseMessageBusPublisherClient
     {
         private const string PLATFORM_EXCHANGE = "platform-exchange";
-        
+
         private ConnectionFactory _factory;
         private IConnection _connection;
         private IModel _channel;
@@ -81,7 +81,7 @@ namespace PlatformService.MQ
 
         private void TryEstablishConnection()
         {
-            try            
+            try
             {
                 _connection = _factory.CreateConnection();
                 _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
