@@ -1,6 +1,5 @@
 ﻿using CommandService.Core;
 using CommandService.Dtos.Platforms;
-using CommandService.MQ.Messages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -14,9 +13,9 @@ namespace CommandService.MQ.BackgroundServices
     public class PublishedPlatformHostedService : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly PublishedPlatformChannel _publishedPlatformBusSubscriber;
+        private readonly PlatformPublishBusClient _publishedPlatformBusSubscriber;
 
-        public PublishedPlatformHostedService(PublishedPlatformChannel publishedPlatformBusSubscriber, IServiceScopeFactory scopeFactory)
+        public PublishedPlatformHostedService(PlatformPublishBusClient publishedPlatformBusSubscriber, IServiceScopeFactory scopeFactory)
         {
             _publishedPlatformBusSubscriber = publishedPlatformBusSubscriber;
             _scopeFactory = scopeFactory;
@@ -37,14 +36,8 @@ namespace CommandService.MQ.BackgroundServices
 
                 var coreService = scope.ServiceProvider.GetRequiredService<PublishedPlatformCore>();
 
-                var messageObject = JsonSerializer.Deserialize<GenericMessage<PlatformPublishedMessage>>(notificationMessage);
-                coreService.AddPlatform(new PlatformPublishedDto
-                {
-                    // TODO: Use Automapper
-                    Event = messageObject.Event,
-                    Id = messageObject.Payload.Id,
-                    Name = messageObject.Payload.Name
-                });
+                var messageObject = JsonSerializer.Deserialize<PlatformPublishedDto>(notificationMessage);
+                coreService.AddPlatform(messageObject);
 
             };
 

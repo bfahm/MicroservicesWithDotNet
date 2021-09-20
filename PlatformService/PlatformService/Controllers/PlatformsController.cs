@@ -19,9 +19,9 @@ namespace PlatformService.Controllers
         private readonly IPlatformRepository platformRepository;
         private readonly IMapper mapper;
         private readonly ICommandClient commandClient;
-        private readonly IMessageBusClient messageBusClient;
+        private readonly IPlatformPublishBusClient messageBusClient;
 
-        public PlatformsController(IPlatformRepository platformRepository, IMapper mapper, ICommandClient commandClient, IMessageBusClient messageBusClient)
+        public PlatformsController(IPlatformRepository platformRepository, IMapper mapper, ICommandClient commandClient, IPlatformPublishBusClient messageBusClient)
         {
             this.platformRepository = platformRepository;
             this.mapper = mapper;
@@ -58,6 +58,7 @@ namespace PlatformService.Controllers
 
             var platformReadDto = mapper.Map<PlatformReadDto>(platformModel);
             var platformPublishedDto = mapper.Map<PlatformPublishedMessage>(platformReadDto);
+            platformPublishedDto.Event = "PLATFORM_PUBLISHED";
 
             await TryPostToCommandsService(platformReadDto);
             TryPostToMessageBus(platformPublishedDto);

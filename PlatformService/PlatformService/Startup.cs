@@ -61,7 +61,7 @@ namespace PlatformService
 
             services.AddHttpClient<ICommandClient, CommandClient>();
             
-            services.AddSingleton<IMessageBusClient, MessageBusClient>();
+            services.AddSingleton<IPlatformPublishBusClient, PlatformPublishBusClient>();
 
             services.AddScoped<IPlatformRepository, PlatformRepository>();
             services.AddControllers();

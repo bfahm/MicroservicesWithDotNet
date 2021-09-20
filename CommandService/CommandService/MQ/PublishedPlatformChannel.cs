@@ -6,26 +6,34 @@ using System;
 
 namespace CommandService.MQ
 {
-    public class PublishedPlatformChannel : RabbitMQConnector
+    public class PlatformPublishBusClient : BaseMessageBusConsumerClient
     {
-        public const string PLATFORM_EXCHANGE = "platform-exchange";
+        private const string PLATFORM_EXCHANGE = "platform-exchange";
+        private const string PLATFORM_PUBLISH_ROUTING_KEY = "platforms-new-publish";
+        
         public EventingBasicConsumer Consumer { get; }
 
-        private IModel _channel;
         private string _queueName;
 
-        public PublishedPlatformChannel(IOptions<AppSettings> options) : base(options)
+        public PlatformPublishBusClient(IOptions<AppSettings> options) : base(options)
         {
-            _channel = _connection.CreateModel();
-            _channel.ExchangeDeclare(exchange: PLATFORM_EXCHANGE, type: ExchangeType.Fanout);
-
-            _queueName = _channel.QueueDeclare().QueueName;
-
-            _channel.QueueBind(queue: _queueName, exchange: PLATFORM_EXCHANGE, routingKey: "");
-
-            Console.WriteLine("--> Listenting on the Message Bus...");
-
             Consumer = new EventingBasicConsumer(_channel);
+            Console.WriteLine("--> Listenting on the Platform Publish Message Bus...");
+        }
+
+        public override void DeclareExchange()
+        {
+            _channel.ExchangeDeclare(exchange: PLATFORM_EXCHANGE, type: ExchangeType.Direct);
+        }
+
+        public override void DeclareQueue()
+        {
+            _queueName = _channel.QueueDeclare().QueueName;
+        }
+
+        public override void BindExchange()
+        {
+            _channel.QueueBind(queue: _queueName, exchange: PLATFORM_EXCHANGE, routingKey: PLATFORM_PUBLISH_ROUTING_KEY);
         }
 
         public override void Consume()

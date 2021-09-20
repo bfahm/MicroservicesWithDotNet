@@ -66,7 +66,7 @@ namespace CommandService
             services.AddScoped<IPlatformRepository, PlatformRepository>();
             services.AddScoped<ICommandRepository, CommandRepository>();
             
-            services.AddSingleton<PublishedPlatformChannel>();
+            services.AddSingleton<PlatformPublishBusClient>();
 
             services.AddScoped<PublishedPlatformCore>();
             services.AddHostedService<PublishedPlatformHostedService>();

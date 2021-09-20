@@ -2,7 +2,7 @@
 
 namespace PlatformService.MQ
 {
-    public interface IMessageBusClient
+    public interface IPlatformPublishBusClient
     {
         void PublishNewPlatform(PlatformPublishedMessage platformPublishedDto);
     }
