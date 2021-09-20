@@ -10,6 +10,7 @@ namespace CommandService.Mapper.Profiles
         {
             CreateMap<Platform, PlatformReadDto>();
             CreateMap<PlatformPublishedDto, Platform>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => 0))
                 .ForMember(dest => dest.ExternalID, opt => opt.MapFrom(src => src.Id));
         }
     }
