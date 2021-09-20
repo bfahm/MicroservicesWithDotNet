@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PlatformService.Dtos;
 using PlatformService.Models;
+using PlatformService.MQ.Messages;
 
 namespace PlatformService.Mapper.Profiles
 {
@@ -10,7 +11,7 @@ namespace PlatformService.Mapper.Profiles
         {
             CreateMap<Platform, PlatformReadDto>();
             CreateMap<PlatformCreateDto, Platform>();
-            CreateMap<PlatformReadDto, PlatformPublishedDto>();
+            CreateMap<PlatformReadDto, PlatformPublishedMessage>();
         }
     }
 }

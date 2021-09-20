@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
-using PlatformService.Dtos;
 using PlatformService.Models;
+using PlatformService.MQ.Messages;
 using RabbitMQ.Client;
 using System;
 
@@ -26,9 +26,10 @@ namespace PlatformService.MQ
             }
         }
 
-        public void PublishNewPlatform(PlatformPublishedDto platformPublishedDto)
+        public void PublishNewPlatform(PlatformPublishedMessage platformPublishedDto)
         {
-            SendMessage(platformPublishedDto, _channel, PLATFORM_EXCHANGE);
+            var message = new GenericMessage<PlatformPublishedMessage>(Events.PLATFORM_PUBLISHED, platformPublishedDto);
+            SendMessage(message, _channel, PLATFORM_EXCHANGE);
         }
     }
 }

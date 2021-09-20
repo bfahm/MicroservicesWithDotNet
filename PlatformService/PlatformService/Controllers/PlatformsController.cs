@@ -4,6 +4,7 @@ using PlatformService.Dtos;
 using PlatformService.HttpClients.Interfaces;
 using PlatformService.Models;
 using PlatformService.MQ;
+using PlatformService.MQ.Messages;
 using PlatformService.Persistance.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -56,8 +57,7 @@ namespace PlatformService.Controllers
             platformRepository.SaveChanges();
 
             var platformReadDto = mapper.Map<PlatformReadDto>(platformModel);
-            var platformPublishedDto = mapper.Map<PlatformPublishedDto>(platformReadDto);
-            platformPublishedDto.Event = "Platform_Published";
+            var platformPublishedDto = mapper.Map<PlatformPublishedMessage>(platformReadDto);
 
             await TryPostToCommandsService(platformReadDto);
             TryPostToMessageBus(platformPublishedDto);
@@ -77,7 +77,7 @@ namespace PlatformService.Controllers
             }
         }
 
-        private void TryPostToMessageBus(PlatformPublishedDto platformPublishedDto)
+        private void TryPostToMessageBus(PlatformPublishedMessage platformPublishedDto)
         {
             try
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using PlatformService.Models;
+using PlatformService.MQ.Messages;
 using RabbitMQ.Client;
 using System;
 using System.Text;
@@ -35,7 +36,7 @@ namespace PlatformService.MQ
             }
         }
 
-        protected void SendMessage<T>(T messageObject, IModel channel, string exchange)
+        protected void SendMessage<T>(GenericMessage<T> messageObject, IModel channel, string exchange)
         {
             var message = JsonSerializer.Serialize(messageObject);
             var body = Encoding.UTF8.GetBytes(message);

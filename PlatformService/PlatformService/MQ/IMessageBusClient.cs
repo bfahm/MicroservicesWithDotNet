@@ -1,9 +1,9 @@
-﻿using PlatformService.Dtos;
+﻿using PlatformService.MQ.Messages;
 
 namespace PlatformService.MQ
 {
     public interface IMessageBusClient
     {
-        void PublishNewPlatform(PlatformPublishedDto platformPublishedDto);
+        void PublishNewPlatform(PlatformPublishedMessage platformPublishedDto);
     }
 }
