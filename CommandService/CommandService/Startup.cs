@@ -1,5 +1,8 @@
+using CommandService.Core;
 using CommandService.Helpers;
 using CommandService.Models;
+using CommandService.MQ;
+using CommandService.MQ.BackgroundServices;
 using CommandService.Persistance.Data;
 using CommandService.Persistance.Interfaces;
 using CommandService.Persistance.Services;
@@ -62,6 +65,11 @@ namespace CommandService
 
             services.AddScoped<IPlatformRepository, PlatformRepository>();
             services.AddScoped<ICommandRepository, CommandRepository>();
+            
+            services.AddSingleton<PublishedPlatformChannel>();
+
+            services.AddScoped<PublishedPlatformCore>();
+            services.AddHostedService<PublishedPlatformHostedService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
