@@ -1,4 +1,5 @@
 using CommandService.Core;
+using CommandService.GrpcClient;
 using CommandService.Helpers;
 using CommandService.Models;
 using CommandService.MQ;
@@ -60,6 +61,7 @@ namespace CommandService
 
             services.AddScoped<IPlatformRepository, PlatformRepository>();
             services.AddScoped<ICommandRepository, CommandRepository>();
+            services.AddScoped<IPlatformDataClient, PlatformDataClient>();
 
             services.AddSingleton<PlatformPublishBusClient>();
 

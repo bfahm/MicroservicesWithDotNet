@@ -5,6 +5,7 @@
         public string DatabaseConnectionString { get; set; }
         public string DatabasePassword { get; set; }
         public RabbitMQConfig RabbitMQConfig { get; set; }
+        public string GrpcPlatform { get; set; }
     }
 
     public class RabbitMQConfig
