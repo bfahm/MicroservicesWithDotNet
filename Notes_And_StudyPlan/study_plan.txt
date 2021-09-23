@@ -1,0 +1,31 @@
+✅ [KUBERNETES]
+	- Namespaces
+	- Ingress
+
+✅ [MICROSERVICES]
+	- Develop Platform Service
+	- Deploy to Kubernetes
+	- Develop Command Service
+	- Deploy to Kubernetes
+
+===================================
+
+✅ [KUBERNETES]
+	- Helm
+	- Persisting Volumes
+	- Statefull Set
+	- Services
+
+✅ [MICROSERVICES]
+	- Part 5: SQL Server
+	- Part 6: MULTI-RESOURCE API
+
+===================================
+
+✅ [MICROSERVICES]
+	- Part 7 & 8: RabbitMQ with Message Bus
+
+===================================
+
+✅ [MICROSERVICES]
+	- Part 9 - GRPC

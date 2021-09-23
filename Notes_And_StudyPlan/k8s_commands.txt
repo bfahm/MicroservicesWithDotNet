@@ -1,0 +1,44 @@
+kubectl create deployment nginx-depl --image=nginx
+
+kubectl describe pod [pod_name_here]
+
+kubectl get deployment
+kubectl get replicaset
+kubectl get pod
+
+kubectl delete deployment [name]
+kubectl delete service [name]
+
+
+cheat sheet
+https://gitlab.com/nanuchi/youtube-tutorial-series/-/blob/master/basic-kubectl-commands/cli-commands.md
+
+
+=========================================================================
+
+[YAML CONFIGURATIONS]
+
+Metadata: 	contains Lables		Key-Value pair for componenets (Deployments, Pods, etc)
+Spec:		contains Selector
+		
+		+ Selector in Deployment was told to match all [app:nginx]
+		  (That way, deployment knows which pod belongs to it)
+		+ Selector in Service searches for the provided labels to serve
+
+kubectl apply -f nginx-deployment.yaml
+kubectl apply -f nginx-service.yaml
+
+kubectl describe service nginx-service 		# view more details about the service including the IP Addresses of the pods it's servicing
+kubectl get pods -o wide			# prints IP Addresses of each pod
+
+kubectl get all					# prints out all resources
+
+==========================================================================
+
+minikube service [service_name]			# to get the IP address of minikube and open the provided service
+
+kubectl logs [pod_name]
+
+==========================================================================
+
+kubectl rollout restart deployment [deployment name]	# restart deployment (to force fetch new version from hub)

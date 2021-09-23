@@ -1,0 +1,27 @@
+---------------
+RABBIT MQ NOTES
+---------------
+
+- Connection: A TCP connection that should be "long-lived", as low numbered as possible, made to the message broker
+		• TCP connections are resource intensive, handshakes, etc
+
+- Channel: Multiple "light-weight" connections can multiplex over a single TCP connection, these "light-weight" connections are called channels
+		• In other words, one TCP Connection can host a number of channels
+		• Channels are cheap to open and close, on the other hand connections are not.
+
+- Binding Key: The key that specifies which messages are allowed to the Queue that is Bound
+		
+		Exchange --------BINDING_KEY-------> Queue
+
+- Routing Key: The key attached to a message that would help Exchange route the message to the correct Queue using the rule:
+
+		WHERE ROUTING_KEY_IN_MSG == BINDING_KEY_OF_QUEUE		## In case of direct exchange
+
+=============================================
+
+Direct Exchange: Routes using basinc equality between routing key and binding key
+Topic Exchange: Routes using wildcards in the routing key
+		(.) delimiter	:	list of keys
+		(*) delimiter	:	matches keys at specific position
+		(#) bound symbol:	matches one or more keys
+

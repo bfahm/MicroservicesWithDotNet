@@ -1,0 +1,20 @@
+Kubernetes 
+	CLUSTER: The whole setup
+		Must contain at least one Master (Control-Plane), could be more than one master
+		Must contain at least one Node
+
+	NODE: A machine (either virtual or physical)
+		Each node has a set of PODS, Pods represent different applications and services running inside the node
+		
+	POD: An abstraction over containers
+		A pod might hold a single or multiple containers
+
+----------------
+
+ClusterIP	A service that exposes application through a port, only accessible within the cluster
+
+NodePort	A service that exposes application through a the node's public IP address and a Port
+		(Need to manage the Node's IP Address, that's why it's not the best approach for exposure)
+
+LoadBalancer	A service accessible through it's IP address (usually provided by your cloud provider)
+		It then forwards the request to a nodePort
