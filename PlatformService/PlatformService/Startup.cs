@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using PlatformService.GrpcServers;
 using PlatformService.Helpers;
 using PlatformService.HttpClients.Interfaces;
 using PlatformService.HttpClients.Services;
@@ -14,6 +16,7 @@ using PlatformService.Persistance.Data;
 using PlatformService.Persistance.Interfaces;
 using PlatformService.Persistance.Services;
 using System;
+using System.IO;
 
 namespace PlatformService
 {
@@ -65,6 +68,7 @@ namespace PlatformService
 
             services.AddScoped<IPlatformRepository, PlatformRepository>();
             services.AddControllers();
+            services.AddGrpc();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlatformService", Version = "v1" });
@@ -91,6 +95,13 @@ namespace PlatformService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<PlatformGrpcService>();
+
+                endpoints.MapGet("protos/platform.proto", ctx =>
+                {
+                    var file = File.ReadAllText("Protos/platforms.proto");
+                    return ctx.Response.WriteAsync(file);
+                });
             });
 
             app.SeedData();
