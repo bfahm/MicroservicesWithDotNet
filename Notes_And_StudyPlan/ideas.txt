@@ -1,6 +1,0 @@
-Application IDEAs:
-	1. Blue Green Deployment with kubernetes
-	2. Put an app to readonly mode
-	3. .NET Console Interface
-
-Checkout docker swarm
